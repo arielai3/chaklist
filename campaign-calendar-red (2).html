@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>לוח קמפיין - מועצת תלמידים</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8585 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: linear-gradient(135deg, #ff0000 0%, #ff4444 100%);
+            color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(255, 0, 0, 0.2);
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+            }
+            to {
+                box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+            }
+        }
+
+        .quote {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-right: 5px solid #ff0000;
+            font-size: 1.2em;
+            transition: transform 0.3s ease;
+        }
+
+        .quote:hover {
+            transform: translateY(-5px);
+        }
+
+        .calendar {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .calendar-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+            background: #ff0000;
+            padding: 15px 0;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 15px;
+        }
+
+        .calendar-day {
+            min-height: 150px;
+            padding: 15px;
+            border-radius: 15px;
+            background: white;
+            transition: all 0.3s ease;
+            border: 2px solid #f0f0f0;
+        }
+
+        .calendar-day.active {
+            background: linear-gradient(45deg, #fff5f5 0%, #ffffff 100%);
+            border: 2px solid #ff6b6b;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.1);
+        }
+
+        .calendar-day:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .day-number {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #ff0000;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .task {
+            background: linear-gradient(45deg, #ffe6e6 0%, #fff0f0 100%);
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 8px;
+            font-size: 0.9em;
+            border-right: 3px solid #ff0000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .task:hover {
+            transform: scale(1.02);
+            background: linear-gradient(45deg, #ffd6d6 0%, #ffe6e6 100%);
+        }
+
+        .task i {
+            color: #ff0000;
+        }
+
+        .highlight {
+            background: #ff0000;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .progress-bar {
+            height: 5px;
+            background: #ffeded;
+            border-radius: 3px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: #ff0000;
+            width: 0;
+            transition: width 0.5s ease;
+        }
+
+        @media (max-width: 768px) {
+            .calendar-grid {
+                grid-template-columns: repeat(1, 1fr);
+            }
+            
+            .calendar-header {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏆 לוח קמפיין - הדרך לניצחון! 🏆</h1>
+            <p>בחירות למועצת התלמידים - דצמבר 2024</p>
+            <div class="progress-bar">
+                <div class="progress" id="campaign-progress"></div>
+            </div>
+        </div>
+
+        <div id="trump-quote" class="quote">
+            <i class="fas fa-quote-right" style="color: #ff0000; margin-left: 10px;"></i>
+            <span id="quote-text"></span>
+        </div>
+
+        <div class="calendar">
+            <div class="calendar-header">
+                <div>ראשון</div>
+                <div>שני</div>
+                <div>שלישי</div>
+                <div>רביעי</div>
+                <div>חמישי</div>
+                <div>שישי</div>
+                <div>שבת</div>
+            </div>
+            <div class="calendar-grid" id="calendar-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        const trumpQuotes = [
+            "אף פעם אל תוותר. אף פעם אל תיכנע. זה מה שעושה מנהיג אמיתי.",
+            "חשוב בגדול ותן לעצמך להצליח. אין דבר כזה חלום גדול מדי.",
+            "המנצחים לא מוותרים, והמוותרים לא מנצחים. זה הכלל הראשון.",
+            "אם אתה נהנה ממה שאתה עושה, תצליח. התשוקה מובילה להצלחה.",
+            "להיות מספר 1 זה הדבר היחיד שחשוב. אל תתפשר על פחות מזה.",
+            "תהיה תמיד הגרסה הטובה ביותר של עצמך.",
+            "אל תפחד מאתגרים, הם הופכים אותך לחזק יותר.",
+            "ההצלחה נמדדת לא רק בתוצאות, אלא גם בדרך שעברת.",
+            "כל יום הוא הזדמנות חדשה להצליח.",
+            "אתה חזק יותר ממה שאתה חושב.",
+            "המכשולים הם המדרגות להצלחה.",
+            "תאמין בעצמך, גם כשאחרים מפקפקים.",
+            "הדרך לפסגה מתחילה בצעד הראשון.",
+            "ההצלחה שייכת לאלה שלא מפחדים לנסות.",
+            "אתה הבוס של הגורל שלך.",
+            "תחשוב כמו מנצח, תפעל כמו מנצח.",
+            "אין דבר כזה כישלון, יש רק לקחים להצלחה.",
+            "תהיה האדם שכולם רוצים להצביע לו.",
+            "מנהיגות היא לקיחת אחריות, לא תארים.",
+            "השינוי מתחיל ממך, תוביל אותו!"
+        ];
+
+        const tasks = {
+            '1': [
+                {text: 'תכנון ראשוני של הקמפיין', icon: 'fa-clipboard-list'},
+                {text: 'רישום רשמי כמועמד/ת', icon: 'fa-file-signature'},
+                {text: 'בניית לוח זמנים מפורט', icon: 'fa-calendar-alt'}
+            ],
+            '2': [
+                {text: 'הקמת צוות קמפיין ראשוני', icon: 'fa-users'},
+                {text: 'גיבוש מסרי קמפיין', icon: 'fa-bullhorn'},
+                {text: 'חלוקת תפקידים בצוות', icon: 'fa-tasks'}
+            ],
+            '3': [
+                {text: 'פגישת צוות ראשונה', icon: 'fa-handshake'},
+                {text: 'הכנת תקציב קמפיין', icon: 'fa-coins'},
+                {text: 'בניית אסטרטגיה דיגיטלית', icon: 'fa-laptop'}
+            ],
+            '4': [
+                {text: 'פתיחת עמודי מדיה חברתית', icon: 'fa-hashtag'},
+                {text: 'צילומי תדמית', icon: 'fa-camera'},
+                {text: 'כתיבת פוסט השקה', icon: 'fa-pen-fancy'}
+            ],
+            '5': [
+                {text: 'פגישה עם הנהלת בית הספר', icon: 'fa-school'},
+                {text: 'הכנת מצגת מסרים', icon: 'fa-presentation'},
+                {text: 'גיוס מתנדבים נוספים', icon: 'fa-user-plus'}
+            ],
+            '6': [
+                {text: 'עיצוב לוגו וחומרים גרפיים', icon: 'fa-palette'},
+                {text: 'תכנון אירועי קמפיין', icon: 'fa-calendar-check'},
+                {text: 'הקמת קבוצות ווטסאפ', icon: 'fa-whatsapp'}
+            ],
+            '7': [
+                {text: 'השקת קמפיין רשמית', icon: 'fa-rocket'},
+                {text: 'חלוקת חומרי הסברה', icon: 'fa-share-alt'},
+                {text: 'פגישות עם מובילי דעה', icon: 'fa-star'}
+            ],
+            '8': [
+                {text: 'יום פעילות בשכבה י׳', icon: 'fa-users-class'},
+                {text: 'צילום סרטון קמפיין', icon: 'fa-video'},
+                {text: 'פוסט יומי ברשתות', icon: 'fa-instagram'}
+            ],
+            '9': [
+                {text: 'יום פעילות בשכבה י״א', icon: 'fa-users-class'},
+                {text: 'עריכת סקר תלמידים', icon: 'fa-poll'},
+                {text: 'הכנת מצגת הישגים', icon: 'fa-chart-line'}
+            ],
+            '10': [
+                {text: 'יום פעילות בשכבה י״ב', icon: 'fa-users-class'},
+                {text: 'פגישת צוות אמצע קמפיין', icon: 'fa-comments'},
+                {text: 'עדכון אסטרטגיה', icon: 'fa-sync'}
+            ],
+            '11': [
+                {text: 'השקת סרטון קמפיין', icon: 'fa-play-circle'},
+                {text: 'מפגשי הסברה אישיים', icon: 'fa-user-friends'},
+                {text: 'הפצת סקר משוב', icon: 'fa-clipboard-check'}
+            ],
+            '12': [
+                {text: 'דוכן הסברה בהפסקה', icon: 'fa-booth-curtain'},
+                {text: 'עדכון חומרי קמפיין', icon: 'fa-edit'},
+                {text: 'פגישה עם ועד ההורים', icon: 'fa-people-roof'}
+            ],
+            '13': [
+                {text: 'הפנינג בחירות', icon: 'fa-party-horn'},
+                {text: 'שידור לייב באינסטגרם', icon: 'fa-broadcast-tower'},
+                {text: 'חלוקת מזכרות קמפיין', icon: 'fa-gift'}
+            ],
+            '14': [
+                {text: 'חזרה גנרלית לנאום', icon: 'fa-microphone'},
+                {text: 'הדפסת פתקי הצבעה', icon: 'fa-print'},
+                {text: 'תדרוך צוות יום הבחירות', icon: 'fa-users-gear'}
+            ],
+            '15': [
+                {text: 'נאום בחירות מרכזי', icon: 'fa-podium'},
+                {text: 'מסיבת עיתונאים', icon: 'fa-newspaper'},
+                {text: 'קמפיין SMS אחרון', icon: 'fa-sms'}
+            ],
+            '16': [
+                {text: 'תזכורות אישיות להצבעה', icon: 'fa-bell'},
+                {text: 'הכנת קלפיות ופרגוד', icon: 'fa-box-ballot'},
+                {text: 'ארגון משקיפים', icon: 'fa-eye'}
+            ],
+            '17': [
+                {text: 'פתיחת יום הבחירות', icon: 'fa-vote-yea'},
+                {text: 'מבצע הבאת מצביעים', icon: 'fa-people-carry'},
+                {text: 'ספירת קולות ומסיבת ניצחון! 🎉', icon: 'fa-glass-cheers'}
+            ]
+        };
+
+        function showRandomQuote() {
+            const quoteElement = document.getElementById('quote-text');
+            const randomQuote = trumpQuotes[Math.floor(Math.random() * trumpQuotes.length)];
+            quoteElement.textContent = `"${randomQuote}" - דונלד טראמפ`;
+        }
+
+        function updateProgress() {
+            const today = new Date();
+            const startDate = new Date(2024, 11, 1); // December 1, 2024
+            const endDate = new Date(2024, 11, 17); // December 17, 2024
+            const total = endDate - startDate;
+            const current = today - startDate;
+            const progress = Math.min(Math.max((current / total) * 100, 0), 100);
+            document.getElementById('campaign-progress').style.width = `${progress}%`;
+        }
+
+        function createCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
+
+            for (let i = 1; i <= 31; i++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day' + (i >= 1 && i <= 17 ? ' active' : '');
+                
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'day-number';
+                dayHeader.innerHTML = `${i} <i class="fas fa-star" style="color: gold;"></i>`;
+                
+                const taskList = document.createElement('ul');
+                taskList.className = 'task-list';
+                
+                if (tasks[i]) {
+                    tasks[i].forEach(task => {
+                        const taskItem = document.createElement('li');
+                        taskItem.className = 'task';
+                        taskItem.innerHTML = `
+                            <i class="fas ${task.icon}"></i>
+                            <span>${task.text}</span>
+                        `;
+                        taskList.appendChild(taskItem);
+                    });
+                }
+                
+                dayElement.appendChild(dayHeader);
+                dayElement.appendChild(taskList);
+                grid.appendChild(dayElement);
+            }
+        }
+
+        window.onload = function() {
+            createCalendar();
+            showRandomQuote();
+            updateProgress();
+            
+            setInterval(showRandomQuote, 8000);
+            setInterval(updateProgress, 1000 * 60); // עדכון כל דקה
+        }
+    </script>
+</body>
+</html>
